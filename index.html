@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Class IX English Interactive Reader</title>
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="logo">📖</div>
+          <div>
+            <h1>Class IX English</h1>
+            <p class="subtitle">Interactive Reader • Sentence Meaning + Voice</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="themeToggle" class="icon-btn">🌓</button>
+          <button id="installBtn" class="install-btn hidden">Install</button>
+        </div>
+      </div>
+    </header>
+    <nav class="lesson-nav" id="lessonNav"></nav>
+    <main class="main">
+      <section class="author-card glass" id="authorSection">
+        <div class="author-photo" id="authorPhoto">—</div>
+        <div class="author-info">
+          <h2 id="authorName">Author</h2>
+          <p id="authorBio" class="author-bio"></p>
+        </div>
+      </section>
+      <div class="controls glass">
+        <button id="playBtn" class="ctrl-btn play">▶ Play All</button>
+        <button id="pauseBtn" class="ctrl-btn">⏸ Pause</button>
+        <button id="stopBtn" class="ctrl-btn">⏹ Stop</button>
+        <div class="speed-control">
+          <label>Speed</label>
+          <input type="range" id="speedRange" min="0.6" max="1.3" step="0.1" value="0.9" />
+          <span id="speedValue">0.9x</span>
+        </div>
+        <button id="bnAllBtn" class="ctrl-btn secondary">🇧🇩 Show All Bengali</button>
+      </div>
+      <p class="hint">Tap any sentence to see Bengali meaning + hear voice</p>
+      <section id="contentArea" class="content-area"></section>
+      <section class="word-nest glass">
+        <h3>📚 Word Nest (All Important Words)</h3>
+        <div id="wordNest" class="word-grid"></div>
+      </section>
+      <section class="critical glass" id="criticalSection">
+        <h3>📝 Critical Analysis</h3>
+        <p id="criticalText"></p>
+      </section>
+    </main>
+    <div id="toast" class="toast hidden"></div>
+  </div>
+  <script src="app.js"></script>
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
+</body>
+</html>
