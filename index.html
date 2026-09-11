@@ -26,7 +26,9 @@
         </div>
       </div>
     </header>
+
     <nav class="lesson-nav" id="lessonNav"></nav>
+
     <main class="main">
       <section class="author-card glass" id="authorSection">
         <div class="author-photo" id="authorPhoto">—</div>
@@ -35,6 +37,7 @@
           <p id="authorBio" class="author-bio"></p>
         </div>
       </section>
+
       <div class="controls glass">
         <button id="playBtn" class="ctrl-btn play">▶ Play All</button>
         <button id="pauseBtn" class="ctrl-btn">⏸ Pause</button>
@@ -46,20 +49,31 @@
         </div>
         <button id="bnAllBtn" class="ctrl-btn secondary">🇧🇩 Show All Bengali</button>
       </div>
+
       <p class="hint">Tap any sentence to see Bengali meaning + hear voice</p>
+
       <section id="contentArea" class="content-area"></section>
+
       <section class="word-nest glass">
         <h3>📚 Word Nest (All Important Words)</h3>
         <div id="wordNest" class="word-grid"></div>
       </section>
+
       <section class="critical glass" id="criticalSection">
         <h3>📝 Critical Analysis</h3>
         <p id="criticalText"></p>
       </section>
     </main>
+
     <div id="toast" class="toast hidden"></div>
   </div>
+
+  <script src="data.js"></script>
   <script src="app.js"></script>
-  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
 </body>
 </html>
