@@ -131,7 +131,7 @@ const lessons = {
       scowled: { en: "looked at somebody angrily", bn: "রাগে তাকানো" }
     }
   },
-    "sailor": {
+  "sailor": {
     title: "A Shipwrecked Sailor",
     author: "Daniel Defoe",
     initials: "DD",
