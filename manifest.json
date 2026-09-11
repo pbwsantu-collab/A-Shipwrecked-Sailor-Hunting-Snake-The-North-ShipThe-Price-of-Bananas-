@@ -1,0 +1,9 @@
+{
+  "name": "Class IX English Interactive Reader",
+  "short_name": "Class IX English",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": []
+}
