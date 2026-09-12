@@ -1,5 +1,5 @@
 const CACHE = 'class-ix-reader-v3';
-const ASSETS = ['./', './index.html', './style.css', './app.js', './data.js', './manifest.json'];
+const ASSETS = ['./', './index.html', './style.css', './app.js', './data.js', './practice_data.js', './manifest.json'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
