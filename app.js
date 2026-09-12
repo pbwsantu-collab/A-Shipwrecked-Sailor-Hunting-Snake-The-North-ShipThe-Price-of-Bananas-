@@ -90,7 +90,7 @@ function setupControls() {
   };
   document.getElementById("bnAllBtn").onclick = () => {
     showAllBn = !showAllBn;
-    document.getElementById("bnAllBtn").textContent = showAllBn ? "🇧🇩 Hide All Bengali" : "🇧🇩 Show All Bengali";
+    document.getElementById("bnAllBtn").textContent = showAllBn ? "🇮🇳 Hide All Bengali" : "🇮🇳 Show All Bengali";
     document.querySelectorAll(".sentence").forEach(s => {
       s.classList.toggle("show-bn", showAllBn);
     });
