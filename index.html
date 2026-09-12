@@ -12,7 +12,6 @@
 </head>
 <body>
   <div class="app">
-    <!-- HEADER -->
     <header class="header">
       <div class="header-inner">
         <div class="brand">
@@ -31,10 +30,8 @@
       </div>
     </header>
 
-    <!-- LESSON TABS -->
     <nav class="lesson-nav" id="lessonNav"></nav>
 
-    <!-- MODE TABS -->
     <div class="mode-tabs" id="modeTabs">
       <button class="mode-tab active" data-mode="read">📖 Read</button>
       <button class="mode-tab" data-mode="words">📚 Words</button>
@@ -44,7 +41,6 @@
     </div>
 
     <main class="main">
-      <!-- AUTHOR -->
       <section class="author-card glass" id="authorSection">
         <div class="author-photo" id="authorPhoto">—</div>
         <div class="author-info">
@@ -53,7 +49,6 @@
         </div>
       </section>
 
-      <!-- PROGRESS BAR -->
       <div class="progress-wrap glass" id="progressWrap">
         <div class="progress-label">
           <span>Reading Progress</span>
@@ -62,7 +57,6 @@
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       </div>
 
-      <!-- READ MODE CONTROLS -->
       <div class="controls glass" id="readControls">
         <button id="playBtn" class="ctrl-btn play">▶ Play All</button>
         <button id="pauseBtn" class="ctrl-btn">⏸ Pause</button>
@@ -75,9 +69,8 @@
         <button id="bnAllBtn" class="ctrl-btn secondary">🇮🇳 Show All Bengali</button>
       </div>
 
-      <p class="hint" id="readHint">Tap any sentence to see Bengali meaning + hear voice. Double-tap to mark as studied.</p>
+      <p class="hint" id="readHint">Tap any sentence to see Bengali meaning + hear voice. Use ✓ to mark as studied.</p>
 
-      <!-- CONTENT AREAS -->
       <section id="contentArea" class="content-area mode-panel" data-mode="read"></section>
 
       <section id="wordsPanel" class="mode-panel glass hidden" data-mode="words">
@@ -131,7 +124,6 @@
       </section>
     </main>
 
-    <!-- FOOTER STATS -->
     <footer class="footer glass">
       <div class="stat"><span id="statStudied">0</span> sentences studied</div>
       <div class="stat"><span id="statScore">—</span> last quiz</div>
@@ -142,6 +134,7 @@
   </div>
 
   <script src="data.js"></script>
+  <script src="practice_data.js"></script>
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
