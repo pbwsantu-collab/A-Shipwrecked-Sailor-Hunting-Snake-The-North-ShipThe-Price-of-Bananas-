@@ -9,8 +9,12 @@ let flashFlipped = false;
 let quizAnswers = {};
 let progress = JSON.parse(localStorage.getItem("ix-progress") || "{}");
 
-// ========== INIT ==========
 document.addEventListener("DOMContentLoaded", () => {
+  if (typeof practiceData !== "undefined") {
+    Object.keys(practiceData).forEach(k => {
+      if (lessons[k]) Object.assign(lessons[k], practiceData[k]);
+    });
+  }
   buildNav();
   loadLesson(currentKey);
   setupControls();
@@ -28,12 +32,9 @@ function saveProgress() {
   updateFooter();
   updateProgressBar();
 }
-
 function ensureLessonProgress() {
   if (!progress[currentKey]) progress[currentKey] = { studied: [], quiz: null };
 }
-
-// ========== NAV ==========
 function buildNav() {
   const nav = document.getElementById("lessonNav");
   nav.innerHTML = "";
@@ -51,8 +52,6 @@ function buildNav() {
     nav.appendChild(btn);
   });
 }
-
-// ========== LOAD LESSON ==========
 function loadLesson(key) {
   ensureLessonProgress();
   const L = lessons[key];
@@ -62,33 +61,18 @@ function loadLesson(key) {
   document.getElementById("criticalText").textContent = L.critical || "";
   document.getElementById("summaryText").textContent = L.summary || "Summary will appear here.";
   document.getElementById("themeText").textContent = L.theme || "Theme will appear here.";
-
-  // Sentences
   const area = document.getElementById("contentArea");
   area.innerHTML = "";
   const studied = new Set(progress[key].studied || []);
-
   L.sentences.forEach((s, i) => {
     const div = document.createElement("div");
     div.className = "sentence" + (s.type === "poem" ? " poem" : "") + (studied.has(i) ? " studied" : "");
     div.dataset.index = i;
-    div.innerHTML = `
-      <div class="sentence-num">${i + 1}</div>
-      <div class="sentence-body">
-        <div class="sentence-text">${highlightWords(s.en, L.words)}</div>
-        <div class="bn-meaning">${s.bn}</div>
-      </div>
-      <button class="mark-btn" title="Mark as studied">✓</button>
-    `;
+    div.innerHTML = `<div class="sentence-num">${i + 1}</div><div class="sentence-body"><div class="sentence-text">${highlightWords(s.en, L.words)}</div><div class="bn-meaning">${s.bn}</div></div><button class="mark-btn" title="Mark as studied">✓</button>`;
     div.querySelector(".sentence-body").onclick = () => toggleSentence(div, s.en);
-    div.querySelector(".mark-btn").onclick = (e) => {
-      e.stopPropagation();
-      toggleStudied(i, div);
-    };
+    div.querySelector(".mark-btn").onclick = (e) => { e.stopPropagation(); toggleStudied(i, div); };
     area.appendChild(div);
   });
-
-  // Words
   const nest = document.getElementById("wordNest");
   nest.innerHTML = "";
   Object.entries(L.words || {}).forEach(([w, m]) => {
@@ -98,41 +82,28 @@ function loadLesson(key) {
     item.onclick = () => speak(w);
     nest.appendChild(item);
   });
-
-  // Practice
   renderPractice();
-  // Flash
-  flashIndex = 0;
-  flashFlipped = false;
-  renderFlash();
+  flashIndex = 0; flashFlipped = false; renderFlash();
   updateProgressBar();
   showToast("Loaded: " + L.title);
 }
-
 function highlightWords(text, words) {
   if (!words) return text;
   let result = text;
   Object.keys(words).forEach(w => {
-    const re = new RegExp(`\\b(${w})\\b`, "gi");
+    const re = new RegExp("\\b(" + w + ")\\b", "gi");
     result = result.replace(re, '<span class="hl-word" title="Important word">$1</span>');
   });
   return result;
 }
-
 function toggleStudied(i, div) {
   ensureLessonProgress();
   const arr = progress[currentKey].studied;
   const idx = arr.indexOf(i);
-  if (idx >= 0) {
-    arr.splice(idx, 1);
-    div.classList.remove("studied");
-  } else {
-    arr.push(i);
-    div.classList.add("studied");
-  }
+  if (idx >= 0) { arr.splice(idx, 1); div.classList.remove("studied"); }
+  else { arr.push(i); div.classList.add("studied"); }
   saveProgress();
 }
-
 function updateProgressBar() {
   ensureLessonProgress();
   const total = lessons[currentKey].sentences.length;
@@ -141,8 +112,6 @@ function updateProgressBar() {
   document.getElementById("progressPct").textContent = pct + "%";
   document.getElementById("progressFill").style.width = pct + "%";
 }
-
-// ========== SPEECH ==========
 function speak(text) {
   stopSpeech();
   const u = new SpeechSynthesisUtterance(text);
@@ -150,7 +119,6 @@ function speak(text) {
   u.lang = "en-IN";
   synth.speak(u);
 }
-
 function toggleSentence(div, text) {
   div.classList.toggle("show-bn");
   stopSpeech();
@@ -162,7 +130,6 @@ function toggleSentence(div, text) {
   u.onend = () => div.classList.remove("playing");
   synth.speak(u);
 }
-
 function playAll() {
   stopSpeech();
   const sentences = lessons[currentKey].sentences;
@@ -171,10 +138,7 @@ function playAll() {
     if (i >= sentences.length) return;
     const divs = document.querySelectorAll(".sentence");
     divs.forEach(d => d.classList.remove("playing"));
-    if (divs[i]) {
-      divs[i].classList.add("playing");
-      divs[i].scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+    if (divs[i]) { divs[i].classList.add("playing"); divs[i].scrollIntoView({ behavior: "smooth", block: "center" }); }
     const u = new SpeechSynthesisUtterance(sentences[i].en);
     u.rate = parseFloat(document.getElementById("speedRange").value);
     u.lang = "en-IN";
@@ -183,30 +147,23 @@ function playAll() {
   }
   speakNext();
 }
-
 function stopSpeech() {
   synth.cancel();
   document.querySelectorAll(".sentence").forEach(s => s.classList.remove("playing"));
 }
-
-// ========== MODE TABS ==========
 function setupModeTabs() {
   document.querySelectorAll(".mode-tab").forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll(".mode-tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentMode = btn.dataset.mode;
-      document.querySelectorAll(".mode-panel").forEach(p => {
-        p.classList.toggle("hidden", p.dataset.mode !== currentMode);
-      });
+      document.querySelectorAll(".mode-panel").forEach(p => p.classList.toggle("hidden", p.dataset.mode !== currentMode));
       document.getElementById("readControls").classList.toggle("hidden", currentMode !== "read");
       document.getElementById("readHint").classList.toggle("hidden", currentMode !== "read");
       document.getElementById("progressWrap").classList.toggle("hidden", currentMode !== "read");
     };
   });
 }
-
-// ========== PRACTICE ==========
 function setupPracticeTabs() {
   document.querySelectorAll(".prac-tab").forEach(btn => {
     btn.onclick = () => {
@@ -222,19 +179,13 @@ function setupPracticeTabs() {
     document.getElementById("scoreBox").classList.add("hidden");
   };
 }
-
 function renderPractice() {
   const L = lessons[currentKey];
   const prac = (L.practice || {})[currentPrac] || [];
   const box = document.getElementById("practiceContent");
   box.innerHTML = "";
   quizAnswers = {};
-
-  if (!prac.length) {
-    box.innerHTML = "<p class='panel-desc'>Practice questions will appear here.</p>";
-    return;
-  }
-
+  if (!prac.length) { box.innerHTML = "<p class='panel-desc'>Practice questions loading…</p>"; return; }
   if (currentPrac === "mcq") {
     prac.forEach((item, i) => {
       const div = document.createElement("div");
@@ -251,10 +202,7 @@ function renderPractice() {
           quizAnswers[i] = j;
           const correct = j === item.ans;
           b.classList.add(correct ? "correct" : "wrong");
-          opts.querySelectorAll(".opt-btn").forEach((ob, k) => {
-            ob.disabled = true;
-            if (k === item.ans) ob.classList.add("correct");
-          });
+          opts.querySelectorAll(".opt-btn").forEach((ob, k) => { ob.disabled = true; if (k === item.ans) ob.classList.add("correct"); });
           checkQuizDone(prac.length);
         };
         opts.appendChild(b);
@@ -280,9 +228,7 @@ function renderPractice() {
           const correct = val === item.ans;
           b.classList.add(correct ? "correct" : "wrong");
           opts.querySelectorAll(".opt-btn").forEach(ob => ob.disabled = true);
-          if (!correct) {
-            opts.querySelectorAll(".opt-btn")[item.ans ? 0 : 1].classList.add("correct");
-          }
+          if (!correct) opts.querySelectorAll(".opt-btn")[item.ans ? 0 : 1].classList.add("correct");
           checkQuizDone(prac.length);
         };
         opts.appendChild(b);
@@ -320,7 +266,6 @@ function renderPractice() {
     });
   }
 }
-
 function checkQuizDone(total) {
   if (Object.keys(quizAnswers).length < total) return;
   let correct = 0;
@@ -333,23 +278,20 @@ function checkQuizDone(total) {
   } else {
     Object.values(quizAnswers).forEach(v => { if (v === true) correct++; });
   }
-  const score = `${correct}/${total}`;
-  document.getElementById("scoreText").textContent = `Score: ${score} (${Math.round(correct / total * 100)}%)`;
+  const score = correct + "/" + total;
+  document.getElementById("scoreText").textContent = "Score: " + score + " (" + Math.round(correct / total * 100) + "%)";
   document.getElementById("scoreBox").classList.remove("hidden");
   ensureLessonProgress();
   progress[currentKey].quiz = score;
   saveProgress();
-  showToast(`Quiz finished: ${score}`);
+  showToast("Quiz finished: " + score);
 }
-
-// ========== FLASHCARDS ==========
 function setupFlash() {
   document.getElementById("flashNext").onclick = () => { flashIndex++; flashFlipped = false; renderFlash(); };
   document.getElementById("flashPrev").onclick = () => { flashIndex = Math.max(0, flashIndex - 1); flashFlipped = false; renderFlash(); };
   document.getElementById("flashFlip").onclick = () => { flashFlipped = !flashFlipped; renderFlash(); };
   document.getElementById("flashCard").onclick = () => { flashFlipped = !flashFlipped; renderFlash(); };
 }
-
 function renderFlash() {
   const words = Object.entries(lessons[currentKey].words || {});
   if (!words.length) {
@@ -373,17 +315,13 @@ function renderFlash() {
     back.classList.remove("hidden");
     speak(w);
   }
-  document.getElementById("flashCounter").textContent = `${flashIndex + 1} / ${words.length}`;
+  document.getElementById("flashCounter").textContent = (flashIndex + 1) + " / " + words.length;
 }
-
-// ========== CONTROLS ==========
 function setupControls() {
   document.getElementById("playBtn").onclick = playAll;
   document.getElementById("pauseBtn").onclick = () => { if (synth.speaking) synth.pause(); };
   document.getElementById("stopBtn").onclick = stopSpeech;
-  document.getElementById("speedRange").oninput = e => {
-    document.getElementById("speedValue").textContent = e.target.value + "x";
-  };
+  document.getElementById("speedRange").oninput = e => { document.getElementById("speedValue").textContent = e.target.value + "x"; };
   document.getElementById("bnAllBtn").onclick = () => {
     showAllBn = !showAllBn;
     document.getElementById("bnAllBtn").textContent = showAllBn ? "🇮🇳 Hide All Bengali" : "🇮🇳 Show All Bengali";
@@ -401,19 +339,16 @@ function setupControls() {
     }
   };
 }
-
 function changeFont(dir) {
   const cur = parseInt(localStorage.getItem("ix-font") || "16", 10);
   const next = Math.min(22, Math.max(14, cur + dir));
   localStorage.setItem("ix-font", next);
   applyFontSize();
 }
-
 function applyFontSize() {
   const size = localStorage.getItem("ix-font") || "16";
   document.documentElement.style.setProperty("--base-font", size + "px");
 }
-
 function setupTheme() {
   const saved = localStorage.getItem("theme") || "dark";
   document.documentElement.setAttribute("data-theme", saved);
@@ -424,7 +359,6 @@ function toggleTheme() {
   document.documentElement.setAttribute("data-theme", next);
   localStorage.setItem("theme", next);
 }
-
 let deferredPrompt;
 function setupInstall() {
   window.addEventListener("beforeinstallprompt", e => {
@@ -440,15 +374,13 @@ function setupInstall() {
     }
   };
 }
-
 function updateFooter() {
   let totalStudied = 0;
   Object.values(progress).forEach(p => { totalStudied += (p.studied || []).length; });
   document.getElementById("statStudied").textContent = totalStudied;
-  const last = progress[currentKey]?.quiz;
+  const last = progress[currentKey] && progress[currentKey].quiz;
   document.getElementById("statScore").textContent = last || "—";
 }
-
 function showToast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg;
