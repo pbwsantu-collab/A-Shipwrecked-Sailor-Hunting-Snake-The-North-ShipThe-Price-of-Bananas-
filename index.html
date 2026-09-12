@@ -4,32 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
-  <title>Class IX English Interactive Reader</title>
+  <meta name="description" content="Class IX English Interactive Reader – WBBSE. Sentence meaning, voice, quizzes, flashcards & progress tracking." />
+  <title>Class IX English Interactive Reader | WBBSE</title>
   <link rel="manifest" href="manifest.json" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app">
+    <!-- HEADER -->
     <header class="header">
       <div class="header-inner">
         <div class="brand">
           <div class="logo">📖</div>
           <div>
             <h1>Class IX English</h1>
-            <p class="subtitle">Interactive Reader • Sentence Meaning + Voice</p>
+            <p class="subtitle">Interactive Reader • Voice + Practice + Progress</p>
           </div>
         </div>
         <div class="header-actions">
-          <button id="themeToggle" class="icon-btn">🌓</button>
+          <button id="fontDown" class="icon-btn" title="Smaller text">A−</button>
+          <button id="fontUp" class="icon-btn" title="Larger text">A+</button>
+          <button id="themeToggle" class="icon-btn" title="Toggle theme">🌓</button>
           <button id="installBtn" class="install-btn hidden">Install</button>
         </div>
       </div>
     </header>
 
+    <!-- LESSON TABS -->
     <nav class="lesson-nav" id="lessonNav"></nav>
 
+    <!-- MODE TABS -->
+    <div class="mode-tabs" id="modeTabs">
+      <button class="mode-tab active" data-mode="read">📖 Read</button>
+      <button class="mode-tab" data-mode="words">📚 Words</button>
+      <button class="mode-tab" data-mode="analysis">📝 Analysis</button>
+      <button class="mode-tab" data-mode="practice">✏️ Practice</button>
+      <button class="mode-tab" data-mode="flash">🃏 Flashcards</button>
+    </div>
+
     <main class="main">
+      <!-- AUTHOR -->
       <section class="author-card glass" id="authorSection">
         <div class="author-photo" id="authorPhoto">—</div>
         <div class="author-info">
@@ -38,32 +53,90 @@
         </div>
       </section>
 
-      <div class="controls glass">
+      <!-- PROGRESS BAR -->
+      <div class="progress-wrap glass" id="progressWrap">
+        <div class="progress-label">
+          <span>Reading Progress</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <!-- READ MODE CONTROLS -->
+      <div class="controls glass" id="readControls">
         <button id="playBtn" class="ctrl-btn play">▶ Play All</button>
         <button id="pauseBtn" class="ctrl-btn">⏸ Pause</button>
         <button id="stopBtn" class="ctrl-btn">⏹ Stop</button>
         <div class="speed-control">
           <label>Speed</label>
-          <input type="range" id="speedRange" min="0.6" max="1.3" step="0.1" value="0.9" />
+          <input type="range" id="speedRange" min="0.6" max="1.4" step="0.1" value="0.9" />
           <span id="speedValue">0.9x</span>
         </div>
         <button id="bnAllBtn" class="ctrl-btn secondary">🇮🇳 Show All Bengali</button>
       </div>
 
-      <p class="hint">Tap any sentence to see Bengali meaning + hear voice</p>
+      <p class="hint" id="readHint">Tap any sentence to see Bengali meaning + hear voice. Double-tap to mark as studied.</p>
 
-      <section id="contentArea" class="content-area"></section>
+      <!-- CONTENT AREAS -->
+      <section id="contentArea" class="content-area mode-panel" data-mode="read"></section>
 
-      <section class="word-nest glass">
-        <h3>📚 Word Nest (All Important Words)</h3>
+      <section id="wordsPanel" class="mode-panel glass hidden" data-mode="words">
+        <h3>📚 Word Nest</h3>
+        <p class="panel-desc">Important vocabulary with English & Bengali meanings. Tap a word to hear it.</p>
         <div id="wordNest" class="word-grid"></div>
       </section>
 
-      <section class="critical glass" id="criticalSection">
-        <h3>📝 Critical Analysis</h3>
-        <p id="criticalText"></p>
+      <section id="analysisPanel" class="mode-panel glass hidden" data-mode="analysis">
+        <h3>📝 Critical Analysis & Summary</h3>
+        <div class="analysis-block">
+          <h4>Summary</h4>
+          <p id="summaryText"></p>
+        </div>
+        <div class="analysis-block">
+          <h4>Theme</h4>
+          <p id="themeText"></p>
+        </div>
+        <div class="analysis-block">
+          <h4>Critical Analysis</h4>
+          <p id="criticalText"></p>
+        </div>
+      </section>
+
+      <section id="practicePanel" class="mode-panel glass hidden" data-mode="practice">
+        <h3>✏️ Practice Zone</h3>
+        <div class="practice-tabs">
+          <button class="prac-tab active" data-prac="mcq">MCQ</button>
+          <button class="prac-tab" data-prac="tf">True / False</button>
+          <button class="prac-tab" data-prac="fill">Fill in the Blanks</button>
+        </div>
+        <div id="practiceContent"></div>
+        <div class="score-box hidden" id="scoreBox">
+          <span id="scoreText">Score: 0/0</span>
+          <button id="resetQuiz" class="ctrl-btn">🔄 Try Again</button>
+        </div>
+      </section>
+
+      <section id="flashPanel" class="mode-panel glass hidden" data-mode="flash">
+        <h3>🃏 Vocabulary Flashcards</h3>
+        <div class="flash-card" id="flashCard">
+          <div class="flash-front" id="flashFront">Tap “Next” to start</div>
+          <div class="flash-back hidden" id="flashBack"></div>
+        </div>
+        <div class="flash-controls">
+          <button id="flashPrev" class="ctrl-btn">← Prev</button>
+          <button id="flashFlip" class="ctrl-btn play">Flip</button>
+          <button id="flashNext" class="ctrl-btn">Next →</button>
+        </div>
+        <p class="flash-counter" id="flashCounter">0 / 0</p>
       </section>
     </main>
+
+    <!-- FOOTER STATS -->
+    <footer class="footer glass">
+      <div class="stat"><span id="statStudied">0</span> sentences studied</div>
+      <div class="stat"><span id="statScore">—</span> last quiz</div>
+      <button id="resetProgress" class="text-btn">Reset Progress</button>
+    </footer>
 
     <div id="toast" class="toast hidden"></div>
   </div>
